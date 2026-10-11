@@ -1,0 +1,11 @@
+2026-09-30 20:05:27 - INFO - Created demo sandbox at C:\Users\sahan\OneDrive\Desktop\skills learn\demo_sandbox with 20 sample files.
+2026-09-30 20:05:53 - WARNING - Could not cleanly delete old sandbox: [WinError 5] Access is denied: 'C:\\Users\\sahan\\OneDrive\\Desktop\\skills learn\\demo_sandbox'
+2026-09-30 20:05:53 - INFO - Created demo sandbox at C:\Users\sahan\OneDrive\Desktop\skills learn\demo_sandbox with 20 sample files.
+2026-09-30 20:05:53 - INFO - Starting Batch d254cbab_1790778953 on C:\Users\sahan\OneDrive\Desktop\skills learn\demo_sandbox with strategy 'category'
+2026-09-30 20:05:53 - INFO - Completed Batch d254cbab_1790778953: moved=20, skipped=0, errors=0
+2026-09-30 20:05:53 - INFO - Initiating Rollback for Batch d254cbab_1790778953 (20 operations)
+2026-09-30 20:05:53 - INFO - Batch d254cbab_1790778953 Rollback complete: Restored=20, Errors=0
+2026-09-30 20:06:46 - INFO - Starting Automated File Organizer server on http://127.0.0.1:5000
+2026-09-30 20:06:47 - INFO - Starting Automated File Organizer server on http://127.0.0.1:5000
+2026-09-30 20:12:39 - INFO - Starting Automated File Organizer server on http://127.0.0.1:5000
+2026-09-30 20:12:40 - INFO - Starting Automated File Organizer server on http://127.0.0.1:5000

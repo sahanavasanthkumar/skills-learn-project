@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated File Organizer &bull; Smart Full-Stack File Automation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Background Ambient Glows -->
+    <div class="glow-sphere glow-1"></div>
+    <div class="glow-sphere glow-2"></div>
+    <div class="glow-sphere glow-3"></div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-folder-tree"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>AutoFile<span>Pro</span></h2>
+                    <span class="badge-tag">v2.5 Full-Stack</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="tab-organizer">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Organizer Studio</span>
+                </button>
+                <button class="nav-item" data-tab="tab-watcher">
+                    <i class="fa-solid fa-satellite-dish"></i>
+                    <span>Auto-Pilot Watcher</span>
+                    <span class="live-indicator" id="watcher-badge-dot"></span>
+                </button>
+                <button class="nav-item" data-tab="tab-history">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>History & Rollback</span>
+                </button>
+                <button class="nav-item" data-tab="tab-rules">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Custom Rules</span>
+                </button>
+                <button class="nav-item" data-tab="tab-analytics">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Storage Insights</span>
+                </button>
+                <button class="nav-item" data-tab="tab-logs">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>Live Console</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="theme-toggle-box">
+                    <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button class="btn-demo-quick" id="btn-create-sandbox">
+                    <i class="fa-solid fa-flask-vial"></i>
+                    <span>Generate Sandbox</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top App Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h1 id="page-title">Organizer Studio</h1>
+                    <p class="subtitle" id="page-subtitle">Scan, categorize, detect duplicates and automate file organization with atomic undo.</p>
+                </div>
+                <div class="top-bar-right">
+                    <div class="system-status-chip">
+                        <span class="pulse-dot"></span>
+                        <span id="daemon-status-text">Engine Ready</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB 1: ORGANIZER STUDIO -->
+            <section id="tab-organizer" class="tab-pane active">
+                <!-- Source Directory Picker Card -->
+                <div class="card glass-card source-picker-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-folder-open text-primary"></i>
+                            <h3>Select Target Directory</h3>
+                        </div>
+                        <div class="quick-shortcuts" id="shortcuts-bar">
+                            <!-- Quick folder buttons injected here -->
+                        </div>
+                    </div>
+                    <div class="folder-input-group">
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-hard-drive"></i>
+                            <input type="text" id="target-folder-input" placeholder="Enter folder path (e.g. C:\Users\name\Downloads)" spellcheck="false">
+                        </div>
+                        <button class="btn btn-secondary" id="btn-open-explorer" title="Open in Windows File Explorer">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <span>Explore</span>
+                        </button>
+                        <button class="btn btn-primary" id="btn-scan-folder">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Scan Directory</span>
+                        </button>
+                    </div>
+
+                    <!-- Strategy & Options Row -->
+                    <div class="options-grid">
+                        <div class="option-item">
+                            <label for="strategy-select"><i class="fa-solid fa-layer-group"></i> Organization Strategy</label>
+                            <select id="strategy-select" class="custom-select">
+                                <option value="category" selected>📁 By Category (Documents, Images, Code, etc.)</option>
+                                <option value="extension">🏷️ By Extension (.pdf, .jpg, .py, etc.)</option>
+                                <option value="date_month">📅 By Month (YYYY / MM-Month)</option>
+                                <option value="date_year">🗓️ By Year (YYYY)</option>
+                                <option value="size">⚖️ By File Size (Small, Medium, Large, Huge)</option>
+                            </select>
+                        </div>
+                        <div class="toggle-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="opt-duplicates" checked>
+                                <span class="checkmark"></span>
+                                <span>Quarantine Duplicates to <code>Duplicates/</code></span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="opt-custom-rules" checked>
+                                <span class="checkmark"></span>
+                                <span>Apply Custom Rules First</span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="opt-clean-empty">
+                                <span class="checkmark"></span>
+                                <span>Clean Empty Folders</span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="opt-recursive">
+                                <span class="checkmark"></span>
+                                <span>Scan Subfolders Recursively</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Overview Grid -->
+                <div class="stats-grid" id="stats-container" style="display: none;">
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon-wrapper bg-blue">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Files</span>
+                            <h3 class="stat-value" id="stat-total-files">0</h3>
+                            <span class="stat-subtext" id="stat-scan-time">Scan: 0.0s</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon-wrapper bg-purple">
+                            <i class="fa-solid fa-hard-drive"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Size</span>
+                            <h3 class="stat-value" id="stat-total-size">0 B</h3>
+                            <span class="stat-subtext">Across all items</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon-wrapper bg-red">
+                            <i class="fa-solid fa-copy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Duplicate Files</span>
+                            <h3 class="stat-value" id="stat-duplicate-count">0</h3>
+                            <span class="stat-subtext text-warning" id="stat-wasted-space">0 B wasted</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon-wrapper bg-emerald">
+                            <i class="fa-solid fa-folder-tree"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Categories Detected</span>
+                            <h3 class="stat-value" id="stat-category-count">0</h3>
+                            <span class="stat-subtext">Ready for structure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Breakdown Chips -->
+                <div class="categories-bar glass-card" id="categories-bar" style="display: none;">
+                    <div class="categories-title"><i class="fa-solid fa-chart-simple"></i> Detected File Categories:</div>
+                    <div class="chips-container" id="category-chips"></div>
+                </div>
+
+                <!-- Main File Inventory & Action Center -->
+                <div class="card glass-card files-card" id="files-section" style="display: none;">
+                    <div class="card-header flex-between">
+                        <div class="header-left">
+                            <div class="sub-nav-tabs">
+                                <button class="sub-tab-btn active" data-subtab="all-files">
+                                    <i class="fa-solid fa-list-check"></i> Scanned Files (<span id="tab-count-all">0</span>)
+                                </button>
+                                <button class="sub-tab-btn" data-subtab="duplicates-tab">
+                                    <i class="fa-solid fa-clone"></i> Duplicate Groups (<span id="tab-count-dup">0</span>)
+                                </button>
+                            </div>
+                        </div>
+                        <div class="header-right action-buttons">
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="file-search-filter" placeholder="Filter by name or extension...">
+                            </div>
+                            <button class="btn btn-outline" id="btn-preview-dryrun">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>Dry Run Preview</span>
+                            </button>
+                            <button class="btn btn-success" id="btn-execute-organize">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>Execute Organization</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- All Files Table View -->
+                    <div class="subtab-content active" id="subtab-all-files">
+                        <div class="table-responsive">
+                            <table class="modern-table" id="files-table">
+                                <thead>
+                                    <tr>
+                                        <th width="40"><input type="checkbox" id="select-all-files" checked></th>
+                                        <th>File Name</th>
+                                        <th>Category</th>
+                                        <th>Size</th>
+                                        <th>Modified</th>
+                                        <th>Target Destination</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="files-table-body">
+                                    <!-- Files rows injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Duplicate Groups View -->
+                    <div class="subtab-content" id="subtab-duplicates-tab">
+                        <div class="duplicates-container" id="duplicates-group-container">
+                            <!-- Duplicate group cards -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State Prompt -->
+                <div class="empty-state glass-card" id="empty-state-banner">
+                    <div class="empty-state-icon">
+                        <i class="fa-solid fa-folder-plus"></i>
+                    </div>
+                    <h2>No Directory Scanned Yet</h2>
+                    <p>Enter a folder path above or click <strong>"Generate Sandbox"</strong> to test on safe dummy files instantly.</p>
+                    <div class="empty-state-actions">
+                        <button class="btn btn-primary" id="btn-empty-sandbox">
+                            <i class="fa-solid fa-flask-vial"></i>
+                            <span>Create Demo Sandbox & Scan</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: AUTO-PILOT WATCHER -->
+            <section id="tab-watcher" class="tab-pane">
+                <div class="watcher-hero glass-card">
+                    <div class="watcher-hero-left">
+                        <div class="status-badge-large" id="watcher-hero-status">
+                            <span class="pulsing-radar"></span>
+                            <span id="watcher-hero-text">Background Daemon Active</span>
+                        </div>
+                        <h2>Auto-Pilot Real-Time Watcher</h2>
+                        <p>Set directories (like your <code>Downloads</code> folder) on autopilot. Whenever you download or save a new file, AutoFilePro instantly identifies and organizes it into the correct category in the background.</p>
+                    </div>
+                    <div class="watcher-hero-right">
+                        <div class="watcher-add-box">
+                            <h4><i class="fa-solid fa-plus-circle"></i> Add Monitored Folder</h4>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-folder"></i>
+                                <input type="text" id="watcher-folder-input" placeholder="e.g. C:\Users\name\Downloads">
+                            </div>
+                            <div class="watcher-options-row">
+                                <select id="watcher-strategy-select" class="custom-select">
+                                    <option value="category">📁 By Category</option>
+                                    <option value="extension">🏷️ By Extension</option>
+                                    <option value="date_month">📅 By Date (Month)</option>
+                                </select>
+                                <button class="btn btn-primary" id="btn-start-watcher">
+                                    <i class="fa-solid fa-play"></i>
+                                    <span>Start Watching</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-satellite text-primary"></i>
+                            <h3>Active Monitored Directories</h3>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-refresh-watchers">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="watchers-grid" id="watchers-list">
+                        <!-- Watchers rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: HISTORY & ROLLBACK -->
+            <section id="tab-history" class="tab-pane">
+                <div class="card glass-card">
+                    <div class="card-header flex-between">
+                        <div class="header-title">
+                            <i class="fa-solid fa-clock-rotate-left text-primary"></i>
+                            <h3>Organization Batches &amp; Rollback History</h3>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-refresh-history">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh History
+                        </button>
+                    </div>
+                    <div class="history-list" id="history-batches-container">
+                        <!-- Batches injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: CUSTOM RULES -->
+            <section id="tab-rules" class="tab-pane">
+                <div class="grid-2-col">
+                    <!-- Rule Creator -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="header-title">
+                                <i class="fa-solid fa-plus-circle text-primary"></i>
+                                <h3>Create Custom Sorting Rule</h3>
+                            </div>
+                        </div>
+                        <form id="form-create-rule" class="rule-form">
+                            <div class="form-group">
+                                <label>Rule Friendly Name</label>
+                                <input type="text" id="rule-name" placeholder="e.g., Financial Invoices" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Condition Match Type</label>
+                                <select id="rule-condition" class="custom-select" required>
+                                    <option value="extension">File Extension (e.g. .pdf, .docx or csv,xlsx)</option>
+                                    <option value="prefix">Filename Starts With (Prefix e.g. INV_, invoice_)</option>
+                                    <option value="keyword">Filename Contains Keyword (e.g. tax, report)</option>
+                                    <option value="regex">Regex Expression (e.g. ^(receipt|bill)_\d+)</option>
+                                    <option value="size_gt_mb">File Size Greater Than (MB)</option>
+                                    <option value="size_lt_mb">File Size Less Than (MB)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Pattern / Value</label>
+                                <input type="text" id="rule-pattern" placeholder="e.g. invoice, bill, receipt" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Target Subfolder Name</label>
+                                <input type="text" id="rule-target" placeholder="e.g. Finance/Invoices" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Priority (Lower = Evaluated Earlier)</label>
+                                <input type="number" id="rule-priority" value="10" min="1" max="100">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Save &amp; Activate Rule</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Active Custom Rules List -->
+                    <div class="card glass-card">
+                        <div class="card-header flex-between">
+                            <div class="header-title">
+                                <i class="fa-solid fa-list-check text-primary"></i>
+                                <h3>Active Custom Rules</h3>
+                            </div>
+                        </div>
+                        <div class="rules-list" id="custom-rules-container">
+                            <!-- Custom rules rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Default Category Reference Card -->
+                <div class="card glass-card mt-4">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <i class="fa-solid fa-book-bookmark text-primary"></i>
+                            <h3>Built-in Category Extension Reference</h3>
+                        </div>
+                    </div>
+                    <div class="categories-reference-grid" id="categories-ref-container">
+                        <!-- Injected via API -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: STORAGE ANALYTICS -->
+            <section id="tab-analytics" class="tab-pane">
+                <div class="grid-2-col">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="header-title">
+                                <i class="fa-solid fa-chart-pie text-primary"></i>
+                                <h3>Storage Distribution by Category</h3>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="header-title">
+                                <i class="fa-solid fa-chart-column text-primary"></i>
+                                <h3>File Count by Category</h3>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="count-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: LIVE CONSOLE LOGS -->
+            <section id="tab-logs" class="tab-pane">
+                <div class="card glass-card">
+                    <div class="card-header flex-between">
+                        <div class="header-title">
+                            <i class="fa-solid fa-terminal text-primary"></i>
+                            <h3>Live Application &amp; Watcher Activity Stream</h3>
+                        </div>
+                        <div class="log-actions">
+                            <button class="btn btn-secondary btn-sm" id="btn-refresh-logs">
+                                <i class="fa-solid fa-rotate-right"></i> Refresh
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="btn-clear-logs-view">
+                                <i class="fa-solid fa-trash"></i> Clear View
+                            </button>
+                        </div>
+                    </div>
+                    <div class="terminal-window" id="terminal-body">
+                        <!-- Terminal logs stream here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Dry Run / Batch Confirmation Modal -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal-container glass-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fa-solid fa-wand-magic-sparkles text-primary"></i>
+                    <h3 id="modal-title-text">Organization Simulation Preview</h3>
+                </div>
+                <button class="modal-close-btn" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-content-body">
+                <!-- Preview summary & diffs -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+                <button class="btn btn-success" id="btn-modal-confirm-execute">
+                    <i class="fa-solid fa-bolt"></i> Execute Move Operations Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Operations Details Modal -->
+    <div class="modal-overlay" id="batch-details-modal">
+        <div class="modal-container glass-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fa-solid fa-clock-rotate-left text-primary"></i>
+                    <h3 id="batch-modal-title">Batch File Operations</h3>
+                </div>
+                <button class="modal-close-btn" id="batch-modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="batch-modal-body">
+                <!-- Batch operations table -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-batch-modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification System -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript Application -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
